@@ -10,7 +10,7 @@ Transforms the triangle mesh into a weighted graph
 
 Applies Prim's Algorithm to get a Minimum Spanning Tree
 
-Creates simples hallways to connect the rooms following the MST
+Creates simples hallways to connect the random points in the rooms following the MST
 
 --
 
