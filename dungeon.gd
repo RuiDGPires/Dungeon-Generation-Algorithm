@@ -71,10 +71,6 @@ func primMst(graph: Array) -> Array:
 	
 	var edges = []
 	while (no_edge < size - 1):
-		# For every vertex in the set S, find the all adjacent vertices
-		#, calculate the distance from the vertex selected at step 1.
-		# if the vertex is already in the set S, discard it otherwise
-		# choose another vertex nearest to selected vertex  at step 1.
 		var minimum = INF
 		var x = 0
 		var y = 0
@@ -82,7 +78,6 @@ func primMst(graph: Array) -> Array:
 			if selected[i]:
 				for j in range(size):
 					if ((not selected[j]) and graph[i][j]):  
-						# not in selected and there is an edge
 						if minimum > graph[i][j]:
 							minimum = graph[i][j]
 							x = i
