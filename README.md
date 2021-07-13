@@ -15,3 +15,7 @@ Creates simples hallways to connect the rooms following the MST
 --
 
 Missing room generation and addition of more hallways
+
+## Example
+
+[Example.png](Example.png)

@@ -18,7 +18,7 @@ func _ready():
 	
 	
 	dun = Dungeon.new(map_size, rooms)
-	random_room_points = dun.getRandomRoomPoints("__SEED5__")
+	random_room_points = dun.getRandomRoomPoints("__SEED1__")
 	
 	lines = []
 	for edge in dun.edges:
@@ -43,7 +43,7 @@ func _draw():
 			draw_line(pointToScreen(line[i]), pointToScreen(line[i+1]), Color(1,1,1), 2)
 
 func pointToScreen(point: Vector2) -> Vector2:
-	var offset = Vector2(260, 120)
+	var offset = Vector2(260, 70)
 	var size = 50
 	
 	return offset + point*size
