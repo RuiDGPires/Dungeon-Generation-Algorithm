@@ -18,4 +18,4 @@ Missing room generation and addition of more hallways
 
 ## Example
 
-![Example.png](Example.png)
+![example.gif](example.gif)

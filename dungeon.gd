@@ -5,12 +5,15 @@ class_name Dungeon
 var map: Map
 var edges: Array
 
+var room_centers: Array
+var list: Array
+
 func _init(size: Vector2, rooms: Array = []):
 	map = Map.new(size, rooms)
 	
-	var room_centers = getRoomCenters()
+	room_centers = getRoomCenters()
 	
-	var list = Geometry.triangulate_delaunay_2d(room_centers)
+	list = Geometry.triangulate_delaunay_2d(room_centers)
 	
 	edges = primMst(triangleIndexToGraph(list, room_centers))
 	
@@ -63,10 +66,7 @@ func primMst(graph: Array) -> Array:
 		selected.append(0)
 	
 	var no_edge = 0
-	# the number of egde in minimum spanning tree will be
-	# always less than(V - 1), where V is number of vertices in
-	# graph
-	# choose 0th vertex and make it true
+
 	selected[0] = true
 	
 	var edges = []
