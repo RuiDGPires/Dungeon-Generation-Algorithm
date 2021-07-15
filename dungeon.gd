@@ -8,7 +8,7 @@ var edges: Array
 var room_centers: Array
 var list: Array
 
-func _init(size: Vector2, rooms: Array = []):
+func _init(size: Vector2, rooms: Array = []) -> void:
 	map = Map.new(size, rooms)
 	
 	room_centers = getRoomCenters()
@@ -17,6 +17,11 @@ func _init(size: Vector2, rooms: Array = []):
 	
 	edges = primMst(triangleIndexToGraph(list, room_centers))
 	
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.set_seed(hash("__SEED1__"))
+	
+	for edge in edges:
+		edgeToHallway(edge, rng)
 	
 
 func getRoomCenters() -> Array:
@@ -35,7 +40,7 @@ func delaunayToTriangles(point_list: Array, td: Array) -> Array:
 		
 	return triangles
 	
-func triangleIndexToGraph(triangles: Array, list: Array):
+func triangleIndexToGraph(triangles: Array, list: Array) -> Array:
 	var graph = []
 	for i in range(map.rooms.size()):
 		var aux = []
@@ -129,3 +134,18 @@ func connectPoints(p1: Vector2, p2: Vector2) -> Array:
 	
 	return line_list
 
+func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null):
+	var line: Array
+	
+	if not is_instance_valid(rng):
+		line = connectPoints(self.room_centers[edge[0]], self.room_centers[edge[1]])
+	else:
+		line = connectPoints(self.map.rooms[edge[0]].getRandomPoint(rng), self.map.rooms[edge[1]].getRandomPoint(rng))
+	
+	for i in range(len(line) - 1):
+		if line[i].x == line[i+1].x:
+			for j in range(line[i].y, line[i+1].y + 1):
+				self.map.setAsHallway(Vector2(line[i].x, j))
+		else:
+			for j in range(line[i].x, line[i+1].x + 1):
+				self.map.setAsHallway(Vector2(j, line[i].y))
