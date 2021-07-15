@@ -4,11 +4,11 @@ var dun: Dungeon
 
 var rooms: Array
 
-const min_size = Vector2(40, 38)
-const max_size = Vector2(50, 50)
-const number_of_rooms = 12
-const min_room_size = Vector2(6,6)
-const max_room_size = Vector2(14,13)
+const min_size = Vector2(50, 50)
+const max_size = Vector2(100, 100)
+const number_of_rooms = 11
+const min_room_size = Vector2(8,8)
+const max_room_size = Vector2(14,15)
 
 
 func _ready():
@@ -20,7 +20,7 @@ func _ready():
 	update()
 	
 
-const cell_size = 5
+const cell_size = 11
 const offset = Vector2(110, 50)
 
 func _draw():
