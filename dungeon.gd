@@ -41,14 +41,6 @@ func getRoomCenters() -> Array:
 	
 	return point_list
 
-func delaunayToTriangles(point_list: Array, td: Array) -> Array:
-	var triangles = []
-	
-	for i in range(td.size()/3):
-		triangles.append(Triangle.new(point_list[td[i*3]], point_list[td[i*3 + 1]], point_list[td[i*3 +2]]))
-		
-	return triangles
-	
 func triangleIndexToGraph(triangles: Array, list: Array) -> Array:
 	var graph = []
 	for i in range(map.rooms.size()):
