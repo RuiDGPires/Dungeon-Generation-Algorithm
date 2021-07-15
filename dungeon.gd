@@ -18,11 +18,11 @@ func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: in
 	"""
 	if max_world_size.x < (min_room_size.x + max_room_size.x)/3  * number_of_rooms:
 		print("X Size is not advisable")
-		assert(max_world_size.x > min_room_size.x*0.25 * number_of_rooms)
+		assert(max_world_size.x > min_room_size.x*0.22 * number_of_rooms)
 	
 	if max_world_size.y < (min_room_size.y + max_room_size.y)/3  * number_of_rooms:
 		print("Y Size is not advisable")
-		assert(max_world_size.y > min_room_size.y*0.25 * number_of_rooms)
+		assert(max_world_size.y > min_room_size.y*0.22 * number_of_rooms)
 
 	
 	var world_size = min_world_size	
@@ -154,17 +154,19 @@ to draw this line simply connect the points of the array like so:
 p1 -> a1 | a1 -> a2 | a2 -> p2
 
 """
-const LINE_THRESHOLD: int = 250
+
 func Vect2FToI(v: Vector2):
 	return Vector2(int(v.x), int(v.y))
 
+const BASE_LINE_THRESHOLD: int = 280
+const NEW_THRESHOLD_PERC: float = 2.5
 
-func connectPoints(p1: Vector2, p2: Vector2) -> Array:
+func connectPoints(p1: Vector2, p2: Vector2, threshold:int = BASE_LINE_THRESHOLD) -> Array:
 	var line_list = []
 	var dist = p1.distance_squared_to(p2)
 	var dir = p2 - p1
 	
-	if dist < LINE_THRESHOLD: # Short -> L lines
+	if dist < BASE_LINE_THRESHOLD: # Short -> L lines
 		line_list.append(p1)
 		if abs(dir.x) > abs(dir.y):
 			line_list.append(Vector2(p2.x, p1.y))
@@ -172,8 +174,8 @@ func connectPoints(p1: Vector2, p2: Vector2) -> Array:
 			line_list.append(Vector2(p1.x, p2.y))
 		line_list.append(p2)
 	else: # Long -> S lines
-		line_list.append_array(connectPoints(p1, Vect2FToI((p1 + p2)/2)))
-		line_list.append_array(connectPoints(Vect2FToI((p1 + p2)/2), p2))
+		line_list.append_array(connectPoints(p1, Vect2FToI((p1 + p2)/2), threshold*NEW_THRESHOLD_PERC))
+		line_list.append_array(connectPoints(Vect2FToI((p1 + p2)/2), p2, threshold*NEW_THRESHOLD_PERC))
 	
 	return line_list
 

@@ -20,10 +20,10 @@ Creates simple hallways to connect the random points in the rooms following the 
 ## Examples
 
 ### Hallway calculation
-![example.gif](others/example.gif)
+![example.gif](images_and_gifs/example.gif)
 
 ### Hallway examples with fixed rooms
-![example2.gif](others/example2.gif)
+![example2.gif](images_and_gifs/example2.gif)
 
 ### Total Dungeon Generation
-![example3.gif](others/example3.gif)
+![example3.gif](images_and_gifs/example3.gif)
