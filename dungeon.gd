@@ -18,11 +18,11 @@ func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: in
 	"""
 	if max_world_size.x < (min_room_size.x + max_room_size.x)/3  * number_of_rooms:
 		print("X Size is not advisable")
-		assert(max_world_size.x > min_room_size.x*0.45 * number_of_rooms)
+		assert(max_world_size.x > min_room_size.x*0.25 * number_of_rooms)
 	
 	if max_world_size.y < (min_room_size.y + max_room_size.y)/3  * number_of_rooms:
 		print("Y Size is not advisable")
-		assert(max_world_size.y > min_room_size.y*0.45 * number_of_rooms)
+		assert(max_world_size.y > min_room_size.y*0.25 * number_of_rooms)
 
 	
 	var world_size = min_world_size	
@@ -66,7 +66,6 @@ func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: in
 	
 	var all_edges = getEdgesFromGraph(graph)
 
-	print(all_edges)
 	for edge in all_edges:
 		var inverted = [edge[1], edge[0]]
 		
