@@ -26,4 +26,4 @@ Creates simple hallways to connect the random points in the rooms following the 
 ![example2.gif](others/example2.gif)
 
 ### Total Dungeon Generation
-![example3.gif](others/example2.gif)
+![example3.gif](others/example3.gif)
