@@ -2,8 +2,6 @@ extends Node2D
 
 var dun: Dungeon
 
-var rooms: Array
-
 const min_size = Vector2(50, 50)
 const max_size = Vector2(100, 100)
 const number_of_rooms = 11
