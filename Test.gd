@@ -3,15 +3,14 @@ extends Node2D
 const map_size = Vector2(14,14)
 
 var dun: Dungeon
-var random_room_points: Array
-var lines: Array 
+
+var rooms: Array
 
 var n= -1
 
 
 func _ready():
-	var rooms = []
-	
+	rooms = []
 	rooms.append(Room.new(Rect2(Vector2(0,0), Vector2(3,2))))
 	rooms.append(Room.new(Rect2(Vector2(6,0), Vector2(3,4))))
 	rooms.append(Room.new(Rect2(Vector2(1,5), Vector2(5,3))))
@@ -19,7 +18,10 @@ func _ready():
 	rooms.append(Room.new(Rect2(Vector2(9,6), Vector2(4,5))))
 	rooms.append(Room.new(Rect2(Vector2(2,9), Vector2(4,4))))
 
-	dun = Dungeon.new(map_size, rooms)
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	
+	dun = Dungeon.new(map_size, rooms, rng)
 	
 	update()
 	
@@ -41,4 +43,11 @@ func pointToScreen(point: Vector2) -> Vector2:
 func _input(event):
 	if event.is_action_pressed("ui_accept"):
 		n += 1
+		update()
+	elif event.is_action_pressed("restart"):
+		var rng = RandomNumberGenerator.new()
+		rng.randomize()
+		
+		dun = Dungeon.new(map_size, rooms, rng)
+		
 		update()

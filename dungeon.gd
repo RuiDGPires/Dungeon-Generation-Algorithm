@@ -7,10 +7,7 @@ var map: Map
 
 const PERCENTAGE_OF_NEW_EDGES = 1.4
 
-func _init(size: Vector2, rooms: Array = []) -> void:
-	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
-	rng.set_seed(hash("__SEED3__"))
-
+func _init(size: Vector2, rooms: Array = [], rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:
 	map = Map.new(size, rooms)
 	
 	var room_centers = getRoomCenters()
