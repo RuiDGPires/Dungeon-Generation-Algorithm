@@ -25,5 +25,5 @@ Creates simple hallways to connect the random points in the rooms following the 
 ### Hallway examples with fixed rooms
 ![example2.gif](images_and_gifs/example2.gif)
 
-### Total Dungeon Generation
+### Full dungeon generation
 ![example3.gif](images_and_gifs/example3.gif)
