@@ -6,9 +6,6 @@ var dun: Dungeon
 
 var rooms: Array
 
-var n= -1
-
-
 func _ready():
 	rooms = []
 	rooms.append(Room.new(Rect2(Vector2(0,0), Vector2(3,4))))
@@ -40,10 +37,7 @@ func pointToScreen(point: Vector2) -> Vector2:
 	return offset + point*size
 
 func _input(event):
-	if event.is_action_pressed("ui_accept"):
-		n += 1
-		update()
-	elif event.is_action_pressed("restart"):
+	if event.is_action_pressed("restart"):
 		var rng = RandomNumberGenerator.new()
 		rng.randomize()
 		
