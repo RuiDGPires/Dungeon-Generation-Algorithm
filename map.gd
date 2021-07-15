@@ -2,6 +2,8 @@ extends Node
 
 class_name Map
 
+enum CellType{VOID, ROOM, HALLWAY, DOOR}
+
 var matrix: Array
 var rooms: Array
 
@@ -19,23 +21,23 @@ func setupMatrix(rooms: Array) -> void:
 	for i in range(size.y):
 		var aux = []
 		for j in range(size.x):
-			aux.append(0)
+			aux.append(CellType.VOID)
 		self.matrix.append(aux)
 
 			
 	for room in rooms:
 		for j in range(room.position.x, room.position.x + room.size.x):
 			for i in range(room.position.y, room.position.y + room.size.y):
-				self.matrix[i][j] = 1
+				self.matrix[i][j] = CellType.ROOM
 
 # Returns if position is inside room area
 func setAsHallway(pos: Vector2, previous: Vector2, was_inside_room: bool = false) -> bool:
-	if self.matrix[pos.y][pos.x] != 1 and self.matrix[pos.y][pos.x] != 3:
+	if self.matrix[pos.y][pos.x] != CellType.ROOM and self.matrix[pos.y][pos.x] != CellType.DOOR:
 		if was_inside_room:
-			self.matrix[previous.y][previous.x] = 3
-		self.matrix[pos.y][pos.x] = 2
+			self.matrix[previous.y][previous.x] = CellType.DOOR
+		self.matrix[pos.y][pos.x] = CellType.HALLWAY
 		return false
 	else:
 		if not was_inside_room:
-			self.matrix[pos.y][pos.x] = 3
+			self.matrix[pos.y][pos.x] = CellType.DOOR
 		return true
