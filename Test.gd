@@ -19,10 +19,7 @@ func _ready():
 	rooms.append(Room.new(Rect2(Vector2(9,6), Vector2(4,5))))
 	rooms.append(Room.new(Rect2(Vector2(2,9), Vector2(4,4))))
 
-	
-	
 	dun = Dungeon.new(map_size, rooms)
-	#random_room_points = dun.getRandomRoomPoints("__SEED1__")
 	
 	update()
 	
@@ -33,6 +30,7 @@ func _draw():
 	for x in range(map_size.x):
 		for y in range(map_size.y):
 			draw_rect(Rect2(pointToScreen(Vector2(x, y)), Vector2(50, 50)), colors[dun.map.matrix[y][x]])
+
 			
 func pointToScreen(point: Vector2) -> Vector2:
 	var offset = Vector2(260, 70)

@@ -3,23 +3,30 @@ extends Node
 class_name Dungeon
 
 var map: Map
-var edges: Array
 
-var room_centers: Array
-var list: Array
+
+const PERCENTAGE_OF_NEW_EDGES = 1.4
 
 func _init(size: Vector2, rooms: Array = []) -> void:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.set_seed(hash("__SEED3__"))
+
 	map = Map.new(size, rooms)
 	
-	room_centers = getRoomCenters()
+	var room_centers = getRoomCenters()
 	
-	list = Geometry.triangulate_delaunay_2d(room_centers)
+	var list = Geometry.triangulate_delaunay_2d(room_centers)
 	
-	edges = primMst(triangleIndexToGraph(list, room_centers))
+	var edges = primMst(triangleIndexToGraph(list, room_centers))
 	
-	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
-	rng.set_seed(hash("__SEED1__"))
-	
+	var n = rng.randi() % int(len(edges)*PERCENTAGE_OF_NEW_EDGES)
+
+	for i in range(n):
+		var new_edge = [rng.randi()%len(rooms), rng.randi()%len(rooms)]
+		var new_edge_inverted = [new_edge[1], new_edge[0]]
+		if new_edge[0] != new_edge[1] and not edges.has(new_edge) and not edges.has(new_edge_inverted):
+			edges.append(new_edge)
+
 	for edge in edges:
 		edgeToHallway(edge, rng)
 	
@@ -116,12 +123,17 @@ to draw this line simply connect the points of the array like so:
 p1 -> a1 | a1 -> a2 | a2 -> p2
 
 """
+const LINE_THRESHOLD: int = 50
+func Vect2FToI(v: Vector2):
+	return Vector2(int(v.x), int(v.y))
+
+
 func connectPoints(p1: Vector2, p2: Vector2) -> Array:
 	var line_list = []
 	var dist = p1.distance_squared_to(p2)
 	var dir = p2 - p1
 	
-	if dist < 50: # Short -> L lines
+	if dist < LINE_THRESHOLD: # Short -> L lines
 		line_list.append(p1)
 		if abs(dir.x) > abs(dir.y):
 			line_list.append(Vector2(p2.x, p1.y))
@@ -129,10 +141,16 @@ func connectPoints(p1: Vector2, p2: Vector2) -> Array:
 			line_list.append(Vector2(p1.x, p2.y))
 		line_list.append(p2)
 	else: # Long -> S lines
-		line_list.append_array(connectPoints(p1, (p1 + p2)/2))
-		line_list.append_array(connectPoints((p1 + p2)/2, p2))
+		line_list.append_array(connectPoints(p1, Vect2FToI((p1 + p2)/2)))
+		line_list.append_array(connectPoints(Vect2FToI((p1 + p2)/2), p2))
 	
 	return line_list
+
+func getSign(n: int):
+	if n < 0:
+		return -1
+	else:
+		return 1
 
 func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null):
 	var line: Array
@@ -143,9 +161,14 @@ func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null):
 		line = connectPoints(self.map.rooms[edge[0]].getRandomPoint(rng), self.map.rooms[edge[1]].getRandomPoint(rng))
 	
 	for i in range(len(line) - 1):
+		print(line[i], line[i+1])
+		var _y_sign = getSign(line[i+1].y - line[i].y)
+		var _x_sign = getSign(line[i+1].x - line[i].x)
+
 		if line[i].x == line[i+1].x:
-			for j in range(line[i].y, line[i+1].y + 1):
+			for j in range(line[i].y, line[i+1].y + _y_sign, _y_sign):
 				self.map.setAsHallway(Vector2(line[i].x, j))
 		else:
-			for j in range(line[i].x, line[i+1].x + 1):
+			for j in range(line[i].x, line[i+1].x + _x_sign, _x_sign):
 				self.map.setAsHallway(Vector2(j, line[i].y))
+
