@@ -2,11 +2,11 @@ extends Node2D
 
 var dun: Dungeon
 
-const min_size = Vector2(50, 50)
-const max_size = Vector2(100, 100)
-const number_of_rooms = 11
-const min_room_size = Vector2(8,8)
-const max_room_size = Vector2(14,15)
+export (Vector2) var min_size = Vector2(50, 50)
+export (Vector2) var max_size = Vector2(100, 100)
+export (int) var number_of_rooms = 11
+export (Vector2) var min_room_size = Vector2(8,8)
+export (Vector2) var max_room_size = Vector2(14,15)
 
 
 func _ready():
