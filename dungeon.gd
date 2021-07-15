@@ -10,11 +10,9 @@ const PERCENTAGE_OF_NEW_EDGES = 20
 func _init(size: Vector2, rooms: Array = [], rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:
 	map = Map.new(size, rooms)
 	
-	var room_centers = getRoomCenters()
+	var list = Geometry.triangulate_delaunay_2d(map.room_centers)
 	
-	var list = Geometry.triangulate_delaunay_2d(room_centers)
-	
-	var graph = triangleIndexToGraph(list, room_centers)
+	var graph = triangleIndexToGraph(list, map.room_centers)
 
 	var mst_edges = primMst(graph)
 	
@@ -32,14 +30,6 @@ func _init(size: Vector2, rooms: Array = [], rng: RandomNumberGenerator = Random
 	for edge in mst_edges:
 		edgeToHallway(edge, rng)
 	
-
-func getRoomCenters() -> Array:
-	var point_list = []
-	
-	for room in map.rooms:
-		point_list.append(room.getCenter())
-	
-	return point_list
 
 func triangleIndexToGraph(triangles: Array, list: Array) -> Array:
 	var graph = []
@@ -150,7 +140,7 @@ func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null) -> void:
 	var line: Array
 	
 	if not is_instance_valid(rng):
-		line = connectPoints(self.room_centers[edge[0]], self.room_centers[edge[1]])
+		line = connectPoints(map.room_centers[edge[0]], map.room_centers[edge[1]])
 	else:
 		line = connectPoints(self.map.rooms[edge[0]].getRandomPoint(rng), self.map.rooms[edge[1]].getRandomPoint(rng))
 	

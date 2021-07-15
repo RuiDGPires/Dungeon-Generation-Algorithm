@@ -6,13 +6,14 @@ enum CellType{VOID, ROOM, HALLWAY, DOOR}
 
 var matrix: Array
 var rooms: Array
-
+var room_centers: Array
 var size: Vector2
 
 
 func _init(size: Vector2, rooms: Array) -> void:
 	self.size = size
 	self.rooms = rooms
+	self.room_centers = getRoomCenters(rooms)
 	
 	setupMatrix(rooms)
 
@@ -41,3 +42,11 @@ func setAsHallway(pos: Vector2, previous: Vector2, was_inside_room: bool = false
 		if not was_inside_room:
 			self.matrix[pos.y][pos.x] = CellType.DOOR
 		return true
+		
+func getRoomCenters(rooms: Array) -> Array:
+	var point_list = []
+	
+	for room in rooms:
+		point_list.append(room.getCenter())
+	
+	return point_list
