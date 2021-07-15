@@ -1,10 +1,10 @@
 # Dungeon Generation Algorithm
 
-MISSING PROCEDURAL ROOM GENERATION
-
 --
 
-Receives the rooms and generates the triangle mesh result from Delaunay's Triangulation
+Randomly generates rooms by trial and checking (bad and inefficient solution, to be replaced later)
+
+Generates the triangle mesh result from Delaunay's Triangulation on the rooms' centers
 
 Transforms the triangle mesh into a weighted graph
 
