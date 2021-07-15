@@ -1,46 +1,44 @@
 extends Node2D
 
-const map_size = Vector2(14,14)
-
 var dun: Dungeon
 
 var rooms: Array
 
-func _ready():
-	rooms = []
-	rooms.append(Room.new(Rect2(Vector2(0,0), Vector2(3,4))))
-	rooms.append(Room.new(Rect2(Vector2(6,0), Vector2(3,4))))
-	rooms.append(Room.new(Rect2(Vector2(1,5), Vector2(5,3))))
-	rooms.append(Room.new(Rect2(Vector2(9,6), Vector2(4,5))))
-	rooms.append(Room.new(Rect2(Vector2(2,9), Vector2(4,4))))
+const min_size = Vector2(40, 38)
+const max_size = Vector2(50, 50)
+const number_of_rooms = 12
+const min_room_size = Vector2(6,6)
+const max_room_size = Vector2(14,13)
 
+
+func _ready():
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
 	
-	dun = Dungeon.new(map_size, rooms, rng)
+	dun = Dungeon.new(min_size, max_size, number_of_rooms, min_room_size, max_room_size, rng)
 	
 	update()
 	
 
+const cell_size = 5
+const offset = Vector2(110, 50)
+
 func _draw():
 	var colors = [Color(0,0,0), Color(0, 0.98, 0.32), Color(0.88, 0.78, 0), Color(0.9, 0.9, 0.14)]
 
-	for x in range(map_size.x):
-		for y in range(map_size.y):
-			draw_rect(Rect2(pointToScreen(Vector2(x, y)), Vector2(50, 50)), colors[dun.map.matrix[y][x]])
+	for x in range(dun.map.size.x):
+		for y in range(dun.map.size.y):
+			draw_rect(Rect2(pointToScreen(Vector2(x, y)), Vector2(cell_size, cell_size)), colors[dun.map.matrix[y][x]])
 
 			
 func pointToScreen(point: Vector2) -> Vector2:
-	var offset = Vector2(260, 70)
-	var size = 50
-	
-	return offset + point*size
+	return offset + point*cell_size
 
 func _input(event):
 	if event.is_action_pressed("restart"):
 		var rng = RandomNumberGenerator.new()
 		rng.randomize()
 		
-		dun = Dungeon.new(map_size, rooms, rng)
+		dun = Dungeon.new(min_size, max_size, number_of_rooms, min_room_size, max_room_size, rng)
 		
 		update()

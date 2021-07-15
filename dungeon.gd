@@ -7,8 +7,56 @@ var map: Map
 
 const PERCENTAGE_OF_NEW_EDGES = 20
 
-func _init(size: Vector2, rooms: Array = [], rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:
-	map = Map.new(size, rooms)
+func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: int, min_room_size: Vector2, max_room_size: Vector2, rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:
+	var rooms = []
+	var n = 0
+	
+	assert(max_world_size.x * max_world_size.y > min_room_size.x * min_room_size.y * number_of_rooms)
+	"""
+	Checking the size of the world is important so one can fit the requested
+	number of rooms in there
+	"""
+	if max_world_size.x < (min_room_size.x + max_room_size.x)/3  * number_of_rooms:
+		print("X Size is not advisable")
+		assert(max_world_size.x > min_room_size.x*0.45 * number_of_rooms)
+	
+	if max_world_size.y < (min_room_size.y + max_room_size.y)/3  * number_of_rooms:
+		print("Y Size is not advisable")
+		assert(max_world_size.y > min_room_size.y*0.45 * number_of_rooms)
+
+	
+	var world_size = min_world_size	
+	
+	var tries = 0
+	while n < number_of_rooms:
+		tries += 1
+		assert(tries <= number_of_rooms*800)
+
+		if tries > 100 and world_size.x < max_world_size.x and world_size.y < max_world_size.y:
+			world_size.x = int(lerp(world_size.x, max_world_size.x, 0.25))
+			world_size.y = int(lerp(world_size.y, max_world_size.y, 0.25))
+			tries = 0
+		
+		var room = Room.new(Rect2(Vector2(rng.randi()%int(world_size.x-2) +1, rng.randi()%int(world_size.y-2)+1), Vector2(rng.randi_range(min_room_size.x, max_room_size.x), rng.randi_range(min_room_size.y, max_room_size.y))))
+		
+		var placeable = true
+		
+		if room.position.x + room.size.x >  world_size.x:
+			continue
+		if room.position.y + room.size.y >  world_size.y:
+			continue
+		
+
+		for other in rooms:
+			if room.intersects(other):
+				placeable = false
+				break
+		
+		if placeable:
+			rooms.append(room)
+			n += 1
+
+	map = Map.new(world_size, rooms)
 	
 	var list = Geometry.triangulate_delaunay_2d(map.room_centers)
 	
@@ -107,7 +155,7 @@ to draw this line simply connect the points of the array like so:
 p1 -> a1 | a1 -> a2 | a2 -> p2
 
 """
-const LINE_THRESHOLD: int = 50
+const LINE_THRESHOLD: int = 250
 func Vect2FToI(v: Vector2):
 	return Vector2(int(v.x), int(v.y))
 
