@@ -162,16 +162,25 @@ func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null) -> void:
 	else:
 		line = connectPoints(self.map.rooms[edge[0]].getRandomPoint(rng), self.map.rooms[edge[1]].getRandomPoint(rng))
 	
+	var was_inside_room = true
+
 	for i in range(len(line) - 1):
 		var _y_sign = getSign(line[i+1].y - line[i].y)
 		var _x_sign = getSign(line[i+1].x - line[i].x)
 
 		if line[i].x == line[i+1].x:
 			for j in range(line[i].y, line[i+1].y + _y_sign, _y_sign):
-				self.map.setAsHallway(Vector2(line[i].x, j))
+				if j == line[i].y:
+					was_inside_room = self.map.setAsHallway(Vector2(line[i].x, j), line[i], was_inside_room)
+				else:
+					was_inside_room = self.map.setAsHallway(Vector2(line[i].x, j), Vector2(line[i].x, j-_y_sign), was_inside_room)
+
 		else:
 			for j in range(line[i].x, line[i+1].x + _x_sign, _x_sign):
-				self.map.setAsHallway(Vector2(j, line[i].y))
+				if j == line[i].x:
+					was_inside_room = self.map.setAsHallway(Vector2(j, line[i].y), line[i], was_inside_room)
+				else:
+					was_inside_room = self.map.setAsHallway(Vector2(j, line[i].y), Vector2(j-_x_sign, line[i].y), was_inside_room)
 
 func getEdgesFromGraph(graph: Array) -> Array:
 	var edges = []

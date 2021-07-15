@@ -28,6 +28,14 @@ func setupMatrix(rooms: Array) -> void:
 			for i in range(room.position.y, room.position.y + room.size.y):
 				self.matrix[i][j] = 1
 
-func setAsHallway(pos: Vector2) -> void:
-	if self.matrix[pos.y][pos.x] != 1:
+# Returns if position is inside room area
+func setAsHallway(pos: Vector2, previous: Vector2, was_inside_room: bool = false) -> bool:
+	if self.matrix[pos.y][pos.x] != 1 and self.matrix[pos.y][pos.x] != 3:
+		if was_inside_room:
+			self.matrix[previous.y][previous.x] = 3
 		self.matrix[pos.y][pos.x] = 2
+		return false
+	else:
+		if not was_inside_room:
+			self.matrix[pos.y][pos.x] = 3
+		return true

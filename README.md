@@ -16,7 +16,6 @@ Creates simple hallways to connect the random points in the rooms following the 
 
 --
 
-missing door assignment
 
 ## Example
 

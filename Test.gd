@@ -11,10 +11,9 @@ var n= -1
 
 func _ready():
 	rooms = []
-	rooms.append(Room.new(Rect2(Vector2(0,0), Vector2(3,2))))
+	rooms.append(Room.new(Rect2(Vector2(0,0), Vector2(3,4))))
 	rooms.append(Room.new(Rect2(Vector2(6,0), Vector2(3,4))))
 	rooms.append(Room.new(Rect2(Vector2(1,5), Vector2(5,3))))
-	rooms.append(Room.new(Rect2(Vector2(7,4), Vector2(2,2))))
 	rooms.append(Room.new(Rect2(Vector2(9,6), Vector2(4,5))))
 	rooms.append(Room.new(Rect2(Vector2(2,9), Vector2(4,4))))
 
@@ -27,7 +26,7 @@ func _ready():
 	
 
 func _draw():
-	var colors = [Color(0,0,0), Color(0, 0.98, 0.32), Color(0.88, 0.78, 0)]
+	var colors = [Color(0,0,0), Color(0, 0.98, 0.32), Color(0.88, 0.78, 0), Color(0.9, 0.9, 0.14)]
 
 	for x in range(map_size.x):
 		for y in range(map_size.y):
