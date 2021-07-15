@@ -5,7 +5,7 @@ class_name Dungeon
 var map: Map
 
 
-const PERCENTAGE_OF_NEW_EDGES = 1.4
+const PERCENTAGE_OF_NEW_EDGES = 20
 
 func _init(size: Vector2, rooms: Array = [], rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:
 	map = Map.new(size, rooms)
@@ -14,17 +14,22 @@ func _init(size: Vector2, rooms: Array = [], rng: RandomNumberGenerator = Random
 	
 	var list = Geometry.triangulate_delaunay_2d(room_centers)
 	
-	var edges = primMst(triangleIndexToGraph(list, room_centers))
+	var graph = triangleIndexToGraph(list, room_centers)
+
+	var mst_edges = primMst(graph)
 	
-	var n = rng.randi() % int(len(edges)*PERCENTAGE_OF_NEW_EDGES)
+	var all_edges = getEdgesFromGraph(graph)
 
-	for i in range(n):
-		var new_edge = [rng.randi()%len(rooms), rng.randi()%len(rooms)]
-		var new_edge_inverted = [new_edge[1], new_edge[0]]
-		if new_edge[0] != new_edge[1] and not edges.has(new_edge) and not edges.has(new_edge_inverted):
-			edges.append(new_edge)
+	print(all_edges)
+	for edge in all_edges:
+		var inverted = [edge[1], edge[0]]
+		
+		if not mst_edges.has(edge) and not mst_edges.has(inverted):
+			if rng.randi()%100 <= PERCENTAGE_OF_NEW_EDGES:
+				mst_edges.append(edge)
 
-	for edge in edges:
+
+	for edge in mst_edges:
 		edgeToHallway(edge, rng)
 	
 
@@ -149,7 +154,7 @@ func getSign(n: int):
 	else:
 		return 1
 
-func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null):
+func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null) -> void:
 	var line: Array
 	
 	if not is_instance_valid(rng):
@@ -158,7 +163,6 @@ func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null):
 		line = connectPoints(self.map.rooms[edge[0]].getRandomPoint(rng), self.map.rooms[edge[1]].getRandomPoint(rng))
 	
 	for i in range(len(line) - 1):
-		print(line[i], line[i+1])
 		var _y_sign = getSign(line[i+1].y - line[i].y)
 		var _x_sign = getSign(line[i+1].x - line[i].x)
 
@@ -169,3 +173,12 @@ func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null):
 			for j in range(line[i].x, line[i+1].x + _x_sign, _x_sign):
 				self.map.setAsHallway(Vector2(j, line[i].y))
 
+func getEdgesFromGraph(graph: Array) -> Array:
+	var edges = []
+
+	for i in range(1, len(graph)):
+		for j in range(i):
+			if graph[i][j] != 0:
+				edges.append([j, i])
+
+	return edges
