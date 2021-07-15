@@ -19,7 +19,7 @@ func _ready():
 	
 
 const cell_size = 11
-const offset = Vector2(110, 50)
+const offset = Vector2(20, 10)
 
 func _draw():
 	var colors = [Color(0,0,0), Color(0, 0.98, 0.32), Color(0.88, 0.78, 0), Color(0.9, 0.9, 0.14)]
