@@ -19,4 +19,8 @@ Creates simple hallways to connect the random points in the rooms following the 
 
 ## Example
 
-![example.gif](example.gif)
+### Hallway calculation
+![example.gif](others/example.gif)
+
+### Hallway examples with fixed rooms
+![example2.gif](others/example2.gif)
