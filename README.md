@@ -37,7 +37,6 @@ Then, *dun.map.matrix* will be a matrix (with **size**: min_size â‰¤ **size** â‰
 
 
 *for more reference, see [Test.gd](Test.gd)*
---
 
 
 ## Examples
