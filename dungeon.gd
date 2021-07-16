@@ -5,7 +5,7 @@ class_name Dungeon
 var map: Map
 
 
-const PERCENTAGE_OF_NEW_EDGES = 5
+const PERCENTAGE_OF_NEW_EDGES = 15
 
 func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: int, min_room_size: Vector2, max_room_size: Vector2, rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:	
 	assert(max_world_size.x * max_world_size.y > min_room_size.x * min_room_size.y * number_of_rooms)
@@ -30,12 +30,18 @@ func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: in
 	var mst_edges = primMst(graph)
 	
 	var all_edges = getEdgesFromGraph(graph)
+	var bad_edges = getBadEdges(map, all_edges)
 
 	for edge in all_edges:
+		var bad_edge_weight = 1
+		if bad_edges[edge[0]][edge[1]] > 0:
+			print(edge[0]," ", edge[1])
+			bad_edge_weight += bad_edges[edge[0]][edge[1]]
+		
 		var inverted = [edge[1], edge[0]]
 		
 		if not mst_edges.has(edge) and not mst_edges.has(inverted):
-			if rng.randi()%100 <= PERCENTAGE_OF_NEW_EDGES:
+			if rng.randi()%100 <= PERCENTAGE_OF_NEW_EDGES/bad_edge_weight:
 				mst_edges.append(edge)
 
 
@@ -141,6 +147,27 @@ func getRandomRoomPoints(_seed: String):
 		
 	return points
 	
+
+func getBadEdges(map: Map, all_edges: Array) -> Array:
+	var bad_edges = []
+	for i in range(len(map.rooms)):
+		var aux = []
+		for j in range(len(map.rooms)):
+			aux.append(-2)
+		bad_edges.append(aux)
+		
+
+	for edge in all_edges:
+		for room in map.rooms:
+			if room.lineIntersects(map.room_centers[edge[0]], map.room_centers[edge[1]]):
+				bad_edges[edge[0]][edge[1]] += 1
+				bad_edges[edge[1]][edge[0]] += 1
+	
+	return bad_edges
+	
+func Vect2FToI(v: Vector2):
+	return Vector2(int(v.x), int(v.y))
+
 """
 connectPoints(Vector2, Vector2) returns an array of points that make up a line that connects the two given points
 
@@ -155,10 +182,6 @@ to draw this line simply connect the points of the array like so:
 p1 -> a1 | a1 -> a2 | a2 -> p2
 
 """
-
-func Vect2FToI(v: Vector2):
-	return Vector2(int(v.x), int(v.y))
-
 const BASE_LINE_THRESHOLD: int = 300
 const NEW_THRESHOLD_PERC: float = 10.5
 
@@ -180,12 +203,6 @@ func connectPoints(p1: Vector2, p2: Vector2, threshold:int = BASE_LINE_THRESHOLD
 	
 	return line_list
 
-func getSign(n: int):
-	if n < 0:
-		return -1
-	else:
-		return 1
-
 func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null) -> void:
 	var line: Array
 	
@@ -197,8 +214,8 @@ func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null) -> void:
 	var was_inside_room = true
 
 	for i in range(len(line) - 1):
-		var _y_sign = getSign(line[i+1].y - line[i].y)
-		var _x_sign = getSign(line[i+1].x - line[i].x)
+		var _y_sign = sign(line[i+1].y - line[i].y)
+		var _x_sign = sign(line[i+1].x - line[i].x)
 
 		if line[i].x == line[i+1].x:
 			for j in range(line[i].y, line[i+1].y + _y_sign, _y_sign):
