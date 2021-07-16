@@ -13,6 +13,8 @@ Randomly adds other edges to the MST
 
 Creates simple hallways to connect the random points in the rooms following the edges selected
 
+The overall algorithm is still being worked on
+---
 --------
 
 ## How to use
