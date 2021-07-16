@@ -5,12 +5,9 @@ class_name Dungeon
 var map: Map
 
 
-const PERCENTAGE_OF_NEW_EDGES = 20
+const PERCENTAGE_OF_NEW_EDGES = 5
 
-func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: int, min_room_size: Vector2, max_room_size: Vector2, rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:
-	var rooms = []
-	var n = 0
-	
+func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: int, min_room_size: Vector2, max_room_size: Vector2, rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:	
 	assert(max_world_size.x * max_world_size.y > min_room_size.x * min_room_size.y * number_of_rooms)
 	"""
 	Checking the size of the world is important so one can fit the requested
@@ -24,7 +21,31 @@ func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: in
 		print("Y Size is not advisable")
 		assert(max_world_size.y > min_room_size.y*0.22 * number_of_rooms)
 
+	map = createMap(min_world_size, max_world_size, number_of_rooms, min_room_size, max_room_size, rng)
 	
+	var list = Geometry.triangulate_delaunay_2d(map.room_centers)
+	
+	var graph = triangleIndexToGraph(list, map.room_centers)
+
+	var mst_edges = primMst(graph)
+	
+	var all_edges = getEdgesFromGraph(graph)
+
+	for edge in all_edges:
+		var inverted = [edge[1], edge[0]]
+		
+		if not mst_edges.has(edge) and not mst_edges.has(inverted):
+			if rng.randi()%100 <= PERCENTAGE_OF_NEW_EDGES:
+				mst_edges.append(edge)
+
+
+	for edge in mst_edges:
+		edgeToHallway(edge, rng)
+	
+
+func createMap(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: int, min_room_size: Vector2, max_room_size: Vector2, rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> Map:
+	var n = 0
+	var rooms = []
 	var world_size = min_world_size	
 	
 	var tries = 0
@@ -56,27 +77,7 @@ func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: in
 			rooms.append(room)
 			n += 1
 
-	map = Map.new(world_size, rooms)
-	
-	var list = Geometry.triangulate_delaunay_2d(map.room_centers)
-	
-	var graph = triangleIndexToGraph(list, map.room_centers)
-
-	var mst_edges = primMst(graph)
-	
-	var all_edges = getEdgesFromGraph(graph)
-
-	for edge in all_edges:
-		var inverted = [edge[1], edge[0]]
-		
-		if not mst_edges.has(edge) and not mst_edges.has(inverted):
-			if rng.randi()%100 <= PERCENTAGE_OF_NEW_EDGES:
-				mst_edges.append(edge)
-
-
-	for edge in mst_edges:
-		edgeToHallway(edge, rng)
-	
+	return Map.new(world_size, rooms)
 
 func triangleIndexToGraph(triangles: Array, list: Array) -> Array:
 	var graph = []
@@ -158,15 +159,15 @@ p1 -> a1 | a1 -> a2 | a2 -> p2
 func Vect2FToI(v: Vector2):
 	return Vector2(int(v.x), int(v.y))
 
-const BASE_LINE_THRESHOLD: int = 280
-const NEW_THRESHOLD_PERC: float = 2.5
+const BASE_LINE_THRESHOLD: int = 300
+const NEW_THRESHOLD_PERC: float = 10.5
 
 func connectPoints(p1: Vector2, p2: Vector2, threshold:int = BASE_LINE_THRESHOLD) -> Array:
 	var line_list = []
 	var dist = p1.distance_squared_to(p2)
 	var dir = p2 - p1
 	
-	if dist < BASE_LINE_THRESHOLD: # Short -> L lines
+	if dist < threshold: # Short -> L lines
 		line_list.append(p1)
 		if abs(dir.x) > abs(dir.y):
 			line_list.append(Vector2(p2.x, p1.y))

@@ -2,7 +2,7 @@ extends Node2D
 
 var dun: Dungeon
 
-export (Vector2) var min_size = Vector2(50, 50)
+export (Vector2) var min_size = Vector2(80, 80)
 export (Vector2) var max_size = Vector2(100, 100)
 export (int) var number_of_rooms = 11
 export (Vector2) var min_room_size = Vector2(8,8)
@@ -50,7 +50,8 @@ func _input(event):
 		cell_size += 1
 		update()
 	elif event.is_action_pressed("scroll_down") and event.control:
-		cell_size -= 1
+		if cell_size > 1:
+			cell_size -= 1
 		update()
 
 
