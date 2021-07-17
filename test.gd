@@ -73,6 +73,5 @@ func _input(event):
 func  _process(delta):
 	if dragging:
 		var current = get_viewport().get_mouse_position()
-
 		offset = base_offset + current - pos
 		update()
