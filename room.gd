@@ -13,7 +13,7 @@ func getCenter():
 	return position + size/2
 
 func getRandomPoint(rng: RandomNumberGenerator = RandomNumberGenerator.new()):
-	return position + Vector2(rng.randi()%int(size.x), rng.randi()%int(size.y))
+	return position + Vector2(1,1) + Vector2(rng.randi()%int(size.x - 2), rng.randi()%int(size.y - 2))
 
 func intersects(other: Room):
 	return Rect2(position-Vector2(1,1), size+Vector2(2,2)).intersects(Rect2(other.position, other.size))

@@ -5,7 +5,7 @@ class_name Dungeon
 var map: Map
 
 
-const PERCENTAGE_OF_NEW_EDGES = 6
+const PERCENTAGE_OF_NEW_EDGES = 10
 
 func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: int, min_room_size: Vector2, max_room_size: Vector2, rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:	
 	assert(max_world_size.x * max_world_size.y > min_room_size.x * min_room_size.y * number_of_rooms)
@@ -35,8 +35,7 @@ func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: in
 	for edge in all_edges:
 		var bad_edge_weight = 1
 		if bad_edges[edge[0]][edge[1]] > 0:
-			print(edge[0]," ", edge[1])
-			bad_edge_weight += bad_edges[edge[0]][edge[1]]*2
+			bad_edge_weight += bad_edges[edge[0]][edge[1]]*1.5
 		
 		var inverted = [edge[1], edge[0]]
 		
@@ -44,9 +43,12 @@ func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: in
 			if rng.randi()%100 <= PERCENTAGE_OF_NEW_EDGES/bad_edge_weight:
 				mst_edges.append(edge)
 
-
+	map.buildWalls()
+	
 	for edge in mst_edges:
 		edgeToHallway(edge, rng)
+
+	map.cleanUp()
 	
 
 func createMap(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: int, min_room_size: Vector2, max_room_size: Vector2, rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> Map:
@@ -205,13 +207,13 @@ func connectPoints(p1: Vector2, p2: Vector2, threshold:int = BASE_LINE_THRESHOLD
 
 func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null) -> void:
 	var line: Array
-	
+	print(edge)
 	if not is_instance_valid(rng):
 		line = connectPoints(map.room_centers[edge[0]], map.room_centers[edge[1]])
 	else:
 		line = connectPoints(self.map.rooms[edge[0]].getRandomPoint(rng), self.map.rooms[edge[1]].getRandomPoint(rng))
 	
-	var was_inside_room = true
+	var wall_relation = false # -1 -> exited | 0 -> nothing | 1 -> entered
 
 	for i in range(len(line) - 1):
 		var _y_sign = sign(line[i+1].y - line[i].y)
@@ -220,16 +222,16 @@ func edgeToHallway(edge: Array, rng: RandomNumberGenerator = null) -> void:
 		if line[i].x == line[i+1].x:
 			for j in range(line[i].y, line[i+1].y + _y_sign, _y_sign):
 				if j == line[i].y:
-					was_inside_room = self.map.setAsHallway(Vector2(line[i].x, j), line[i], was_inside_room)
+					self.map.setAsHallway(Vector2(line[i].x, j), line[i])
 				else:
-					was_inside_room = self.map.setAsHallway(Vector2(line[i].x, j), Vector2(line[i].x, j-_y_sign), was_inside_room)
+					self.map.setAsHallway(Vector2(line[i].x, j), Vector2(line[i].x, j-_y_sign))
 
 		else:
 			for j in range(line[i].x, line[i+1].x + _x_sign, _x_sign):
 				if j == line[i].x:
-					was_inside_room = self.map.setAsHallway(Vector2(j, line[i].y), line[i], was_inside_room)
+					self.map.setAsHallway(Vector2(j, line[i].y), line[i])
 				else:
-					was_inside_room = self.map.setAsHallway(Vector2(j, line[i].y), Vector2(j-_x_sign, line[i].y), was_inside_room)
+					self.map.setAsHallway(Vector2(j, line[i].y), Vector2(j-_x_sign, line[i].y))
 
 func getEdgesFromGraph(graph: Array) -> Array:
 	var edges = []

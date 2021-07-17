@@ -27,7 +27,7 @@ var offset = base_offset
 
 
 func _draw():
-	var colors = [Color(0,0,0,0), Color(0, 0.98, 0.32), Color(0.88, 0.78, 0), Color(0.9, 0.9, 0.14)]
+	var colors = [Color(0,0,0,0), Color(0, 0.98, 0.32), Color(0.88, 0.78, 0), Color(0,0,0)]
 
 	for x in range(dun.map.size.x):
 		for y in range(dun.map.size.y):

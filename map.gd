@@ -2,7 +2,7 @@ extends Node
 
 class_name Map
 
-enum CellType{VOID, ROOM, HALLWAY, DOOR}
+enum CellType{VOID, ROOM, HALLWAY, WALL}
 
 var matrix: Array
 var rooms: Array
@@ -40,16 +40,10 @@ func setupMatrixes(rooms: Array) -> void:
 		n += 1
 
 # Returns if position is inside room area
-func setAsHallway(pos: Vector2, previous: Vector2, was_inside_room: bool = false) -> bool:
-	if self.matrix[pos.y][pos.x] != CellType.ROOM and self.matrix[pos.y][pos.x] != CellType.DOOR:
-		if was_inside_room:
-			self.matrix[previous.y][previous.x] = CellType.DOOR
-		self.matrix[pos.y][pos.x] = CellType.HALLWAY
-		return false
-	else:
-		if not was_inside_room:
-			self.matrix[pos.y][pos.x] = CellType.DOOR
-		return true
+func setAsHallway(pos: Vector2, previous: Vector2) -> void:
+	if matrix[pos.y][pos.x] != CellType.ROOM:
+		matrix[pos.y][pos.x] = CellType.HALLWAY
+		
 		
 func getRoomCenters(rooms: Array) -> Array:
 	var point_list = []
@@ -58,3 +52,27 @@ func getRoomCenters(rooms: Array) -> Array:
 		point_list.append(room.getCenter())
 	
 	return point_list
+
+func buildWalls() -> void:
+	for room in rooms:
+		for y in range(room.position.y, room.position.y + room.size.y):
+			if y == room.position.y or y == room.position.y + room.size.y - 1:
+				for x in range(room.position.x, room.position.x + room.size.x):
+					self.matrix[y][x] = CellType.VOID
+			else:
+				self.matrix[y][room.position.x] = CellType.VOID
+				self.matrix[y][room.position.x + room.size.x - 1] = CellType.VOID
+
+func cleanUp() -> void:
+	var ok = false
+	for x in range(size.x):
+		for y in range(size.y):
+			ok = false
+			if matrix[y][x] == CellType.VOID:
+				for i in range(-1,2):
+					for j in range(-1, 2):
+						if x + i >= 0 and x + i < size.x and y + j < size.y and y + j >= 0 and (i != 0 or j != 0):
+							if matrix[y+j][x+i] != CellType.VOID and matrix[y+j][x+i] != CellType.WALL :
+								ok = true
+				if ok:
+					 matrix[y][x] = CellType.WALL
