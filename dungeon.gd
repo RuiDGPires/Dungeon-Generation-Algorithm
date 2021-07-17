@@ -6,6 +6,7 @@ var map: Map
 
 
 const PERCENTAGE_OF_NEW_EDGES = 10
+const MAX_TRIES = 1000
 
 func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: int, min_room_size: Vector2, max_room_size: Vector2, rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:	
 	assert(max_world_size.x * max_world_size.y > min_room_size.x * min_room_size.y * number_of_rooms)
@@ -59,7 +60,8 @@ func createMap(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms
 	var tries = 0
 	while n < number_of_rooms:
 		tries += 1
-		assert(tries <= number_of_rooms*800)
+		if tries > number_of_rooms*800:
+			break
 
 		if tries > 100 and world_size.x < max_world_size.x and world_size.y < max_world_size.y:
 			world_size.x = int(lerp(world_size.x, max_world_size.x, 0.25))
