@@ -5,7 +5,7 @@ class_name Dungeon
 var map: Map
 
 
-const PERCENTAGE_OF_NEW_EDGES = 10
+const PERCENTAGE_OF_NEW_EDGES = 12
 const MAX_TRIES = 1000
 
 func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: int, min_room_size: Vector2, max_room_size: Vector2, rng: RandomNumberGenerator = RandomNumberGenerator.new()) -> void:	
@@ -36,7 +36,7 @@ func _init(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms: in
 	for edge in all_edges:
 		var bad_edge_weight = 1
 		if bad_edges[edge[0]][edge[1]] > 0:
-			bad_edge_weight += bad_edges[edge[0]][edge[1]]*1.5
+			bad_edge_weight += bad_edges[edge[0]][edge[1]]*1.8
 		
 		var inverted = [edge[1], edge[0]]
 		
@@ -72,9 +72,9 @@ func createMap(min_world_size: Vector2, max_world_size: Vector2, number_of_rooms
 		
 		var placeable = true
 		
-		if room.position.x + room.size.x >  world_size.x:
+		if room.position.x + room.size.x >=  world_size.x :
 			continue
-		if room.position.y + room.size.y >  world_size.y:
+		if room.position.y + room.size.y >=  world_size.y :
 			continue
 		
 
