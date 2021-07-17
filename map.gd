@@ -6,6 +6,7 @@ enum CellType{VOID, ROOM, HALLWAY, DOOR}
 
 var matrix: Array
 var rooms: Array
+var room_matrix: Array
 var room_centers: Array
 var size: Vector2
 
@@ -15,21 +16,28 @@ func _init(size: Vector2, rooms: Array) -> void:
 	self.rooms = rooms
 	self.room_centers = getRoomCenters(rooms)
 	
-	setupMatrix(rooms)
+	setupMatrixes(rooms)
 
-func setupMatrix(rooms: Array) -> void:
+func setupMatrixes(rooms: Array) -> void:
 	self.matrix = []
+	self.room_matrix = []
 	for i in range(size.y):
 		var aux = []
+		var aux2= []
 		for j in range(size.x):
 			aux.append(CellType.VOID)
+			aux2.append(-1)
+		
 		self.matrix.append(aux)
-
+		self.room_matrix.append(aux2)
 			
+	var n = 0
 	for room in rooms:
 		for j in range(room.position.x, room.position.x + room.size.x):
 			for i in range(room.position.y, room.position.y + room.size.y):
 				self.matrix[i][j] = CellType.ROOM
+				self.room_matrix[i][j] = n
+		n += 1
 
 # Returns if position is inside room area
 func setAsHallway(pos: Vector2, previous: Vector2, was_inside_room: bool = false) -> bool:
